@@ -1,10 +1,10 @@
 {
   "name": "council-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "description": "Simple API for DC Fantasy Council",
+  "author": "Andrew Turner <ajturner@highearthorbit.com>",
+  "private": false,
+  "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
