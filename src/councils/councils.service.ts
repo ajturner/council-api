@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Council, Prisma } from '@prisma/client';
+const genRanHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 
 @Injectable()
 export class CouncilsService {
@@ -31,9 +32,14 @@ export class CouncilsService {
     });
   }
 
-  async createCouncil(data: Prisma.CouncilCreateInput): Promise<Council> {
+  async createCouncil(council: Prisma.CouncilCreateInput): Promise<Council> {
+    const data = {
+      id: genRanHex(8),
+      ...council
+    };
+    console.log("createCouncil", {data})
     return this.prisma.council.create({
-      data,
+      data
     });
   }
 
