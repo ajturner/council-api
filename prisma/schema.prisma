@@ -20,4 +20,5 @@ model Council {
   author        String?
   description   String?
   committees    String?
+  secret        String?   @default("edit") // private string needed to edit committee
 }
