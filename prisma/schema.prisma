@@ -3,6 +3,8 @@
 
 generator client {
   provider = "prisma-client-js"
+  output        = "../node_modules/.prisma/client"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
@@ -11,11 +13,12 @@ datasource db {
 }
 
 model Council {
-  id            String   @id @default(cuid())
-  title         String @default("")
-  created       DateTime @default(now())
-  updated       DateTime @updatedAt @default(now())
+  id            String    @id
+  title         String    @default("")
+  created       DateTime  @default(now())
+  updated       DateTime  @updatedAt @default(now())
   author        String?
   description   String?
   committees    String?
+  secret        String?   @default("edit") // private string needed to edit committee
 }

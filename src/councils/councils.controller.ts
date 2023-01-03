@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CouncilsService } from './councils.service';
 import { Council as CouncilModel } from '@prisma/client';
+const genRanHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 
 @Controller('councils')
 export class CouncilsController {
@@ -35,6 +36,7 @@ export class CouncilsController {
   @Post()
   // @UsePipes(ValidationPipe)
   async addCouncil(@Body() councilData: CouncilModel) {
+    councilData.id = genRanHex(8);
     console.log('POST: addCouncil', councilData);
     const council = await this.councilsService.createCouncil(councilData);
     return council;

@@ -1,0 +1,111 @@
+service: council-api-simple
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  vpc:
+      securityGroupIds:
+        - sg-0592848f434d5545b
+      subnetIds:
+        - subnet-05844f13c0ab47fc5
+        - subnet-018a2234d3d0abf3a
+        - subnet-074f448bc3840c802
+        - subnet-013601007995e9ae3
+        - subnet-0d68326a7d67f226d
+        - subnet-07135a823b0e6f394
+        
+# Via https://medium.com/@antonio.cm.oliveira/how-to-access-your-rds-database-with-lambda-function-and-serverless-b7712dde9f80
+resources:
+  Resources:
+    AWSLambdaVPCAccessExecutionRole:
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+        Description: Creating policy for vpc connection.
+        Roles:
+          - {"Ref" : "IamRoleLambdaExecution"}
+        PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+                - ec2:CreateNetworkInterface
+                - ec2:DescribeNetworkInterfaces
+                - ec2:DeleteNetworkInterface
+              Resource: "*"
+
+# AWS Lambda Functions
+functions:
+  # currentTime:
+  #   handler: dist/time.handler
+  #   events:
+  #     - httpApi:
+  #         path: /time
+  #         method: get
+  
+  # Simple interfaces to get this working
+  # getCouncils:
+  #   handler: dist/handlers/councils.handler
+  #   vpc:
+  #     securityGroupIds:
+  #       - sg-0592848f434d5545b
+  #     subnetIds:
+  #       - subnet-05844f13c0ab47fc5
+  #       - subnet-018a2234d3d0abf3a
+  #       - subnet-074f448bc3840c802
+  #       - subnet-013601007995e9ae3
+  #       - subnet-0d68326a7d67f226d
+  #       - subnet-07135a823b0e6f394    
+  #   events:
+  #     - http:
+  #         method: GET
+  #         path: /simple
+  # createCouncil:
+  #   handler: dist/handlers/create-council.handler
+  #   events:
+  #     - http:
+  #         method: POST
+  #         path: /simple
+  status:
+    handler: dist/handlers/status.handler
+    events:
+      - http:
+          method: GET
+          path: /status
+  # NestJS version
+  main:
+    handler: dist/main.handler
+    vpc:
+      securityGroupIds:
+        - sg-0592848f434d5545b
+      subnetIds:
+        - subnet-05844f13c0ab47fc5
+        - subnet-018a2234d3d0abf3a
+        - subnet-074f448bc3840c802
+        - subnet-013601007995e9ae3
+        - subnet-0d68326a7d67f226d
+        - subnet-07135a823b0e6f394
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: /hello          
+      - http:
+          method: ANY
+          path: '{proxy+}'
+
+# Reduce package size - via https://sabinadams.hashnode.dev/managing-lambda-size-with-multiple-prisma-clients
+package: 
+  patterns:
+    - '!node_modules/.prisma/client/libquery_engine-*'
+    - 'node_modules/.prisma/client/libquery_engine-rhel-*'
+    - '!node_modules/prisma/libquery_engine-*'
+    - '!node_modules/@prisma/engines/**'  
+    # - '!node_modules/@prisma/engines'
+    # - '!node_modules/prisma'
+    # - '!node_modules/.prisma/**/libquery_engine-*'
+    # - 'node_modules/.prisma/**/libquery_engine-rhel-openssl-1.0.x.so.node'
